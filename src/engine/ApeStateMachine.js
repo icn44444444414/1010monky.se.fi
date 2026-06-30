@@ -56,7 +56,7 @@ export class ApeStateMachine {
       } else {
         f.state = 'exit';
         f.squash = 0;
-        f.exit = (s.exitT - T.launch) / (1 - T.launch); // ramp the dissolve 0->1
+        f.exit = Math.min(1, (s.exitT - T.launch) / 0.35); // dissolve completes by exitT ~0.55, then gone
       }
     } else {
       f.state = ph.state;

@@ -74,8 +74,9 @@ export class WaypointController {
 
     // Exit segment: monotonic eased rise to the top-center (visible), where it dissolves.
     if (s.isExit) {
-      const ex = s.p0.x + (s.p1.x - s.p0.x) * easeInOutCubic(t);
-      const ey = s.p0.y + (s.p1.y - s.p0.y) * easeInCubic(t);
+      const rt = Math.min(t / 0.55, 1); // the leap-away completes by exitT ~0.55, then it's gone
+      const ex = s.p0.x + (s.p1.x - s.p0.x) * easeInOutCubic(rt);
+      const ey = s.p0.y + (s.p1.y - s.p0.y) * easeOutCubic(rt); // rise FAST then settle at the top
       return { x: ex, y: ey, t, seg, facing: s.dx >= 0 ? 'right' : 'left', vy: -1, exitT: t };
     }
 

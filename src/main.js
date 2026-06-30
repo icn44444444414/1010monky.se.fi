@@ -54,7 +54,7 @@ function boot() {
     choreo.start();
 
     let lastState = 'perch';
-    let exitFrames = 0;
+    let lastExit = 0;
     function loop() {
       const frame = stateMachine.frameAt(progress);
       renderer.setFrame(frame);
@@ -62,14 +62,13 @@ function boot() {
       if (frame.state === 'land' && lastState !== 'land') {
         dust.emitBurst(frame.screenPos.x, frame.screenPos.y);
       }
-      // exit: stream the monkey apart into 1010s WHILE it's dissolving; stop once it's gone
-      if (frame.state === 'exit' && frame.exit < 0.98) {
-        if (exitFrames % 2 === 0) dust.emitBurst(frame.screenPos.x, frame.screenPos.y, 8);
-        exitFrames++;
-      } else {
-        exitFrames = 0;
+      // exit: stream 1010s ONLY while the dissolve is actively progressing (scrolling forward),
+      // so it never keeps emitting when parked at the bottom or scrolling back up.
+      if (frame.state === 'exit' && frame.exit > lastExit + 0.0008 && frame.exit < 0.98) {
+        dust.emitBurst(frame.screenPos.x, frame.screenPos.y, 8);
       }
       lastState = frame.state;
+      lastExit = frame.exit;
       requestAnimationFrame(loop);
     }
     requestAnimationFrame(loop);
