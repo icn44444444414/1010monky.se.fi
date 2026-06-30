@@ -27,10 +27,26 @@ export class WaypointController {
     const moonY = H * 0.46 + Math.min(W * 0.18, 120) * 0.55;
     const anchors = [{ x: W * 0.5, y: moonY }];
 
-    // One landing per panel, alternating sides so the monkey clearly shows both directions.
-    panels.forEach((_, i) => {
-      const left = i % 2 === 0;
-      anchors.push({ x: left ? W * 0.24 : W * 0.76, y: H * 0.6 });
+    // One landing per panel — placed BESIDE that panel's text (in the empty space), like a
+    // companion sitting next to what you're reading. Centered text: land just below it.
+    panels.forEach((panel) => {
+      const pr = panel.getBoundingClientRect();
+      let l = Infinity, r = -Infinity, top = Infinity, bot = -Infinity;
+      Array.from(panel.children).forEach((k) => {
+        const b = k.getBoundingClientRect();
+        if (b.width === 0 || b.height === 0) return;
+        l = Math.min(l, b.left); r = Math.max(r, b.right);
+        top = Math.min(top, b.top); bot = Math.max(bot, b.bottom);
+      });
+      if (!isFinite(l)) { anchors.push({ x: W * 0.5, y: H * 0.6 }); return; }
+      const cx = (l + r) / 2;                      // content horizontal center (viewport x)
+      const cyMid = (top - pr.top + bot - pr.top) / 2; // content vertical center when the panel fills the screen
+      const margin = Math.max(56, W * 0.05);
+      let x, y;
+      if (cx < W * 0.42) { x = r + margin; y = cyMid; }        // text on the left  -> sit to its right
+      else if (cx > W * 0.58) { x = l - margin; y = cyMid; }   // text on the right -> sit to its left
+      else { x = W * 0.5; y = (bot - pr.top) + margin; }       // centered text     -> sit just below it
+      anchors.push({ x: clamp(x, 70, W - 70), y: clamp(y, 90, H - 90) });
     });
 
     // Exit: rise to the top-center (still on screen) and dissolve into 1010 there.
