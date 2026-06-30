@@ -103,10 +103,10 @@ body {
   text-align: center;
 }
 
-/* Custom cursor: hide native on the stage when JS enables it */
-body.cursor-custom { cursor: none; }
-body.cursor-custom a,
-body.cursor-custom button { cursor: none; }
+/* Banana cursor: the NATIVE OS cursor is a banana image — perfectly smooth, zero JS lag.
+   Falls back to the normal arrow if a browser ignores SVG cursors. */
+body.cursor-banana,
+body.cursor-banana * { cursor: url('/cursor/banana.svg') 7 3, auto; }
 
 /* Reduced motion: nothing animates; moon + content remain readable */
 @media (prefers-reduced-motion: reduce) {

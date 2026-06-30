@@ -9,16 +9,15 @@ import { createRenderer } from './render/ApeRendererFactory.js';
 import { WaypointController } from './engine/WaypointController.js';
 import { ApeStateMachine } from './engine/ApeStateMachine.js';
 import { ScrollChoreographer } from './engine/ScrollChoreographer.js';
-import { BananaCursor } from './cursor/BananaCursor.js';
 import { BinaryDustField } from './cursor/BinaryDustField.js';
 
 function boot() {
   const caps = resolveCapabilities();
   const apeLayer = document.getElementById('ape-layer');
 
-  // Banana cursor only (no dust trail) — fine-pointer, motion-ok.
+  // Banana cursor = the native OS cursor (CSS image). Perfectly smooth, no JS follower.
   if (caps.cursor) {
-    new BananaCursor().start();
+    document.body.classList.add('cursor-banana');
   }
 
   // No jump engine under reduced-motion / no-WebGL — show the static perched monkey.
