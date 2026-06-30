@@ -55,8 +55,8 @@ function boot() {
       if (frame.state === 'land' && lastState !== 'land') {
         dust.emitBurst(frame.screenPos.x, frame.screenPos.y);
       }
-      // exit: stream the monkey apart into a rising column of 1010s
-      if (frame.state === 'exit') {
+      // exit: stream the monkey apart into 1010s WHILE it's dissolving; stop once it's gone
+      if (frame.state === 'exit' && frame.exit < 0.98) {
         if (exitFrames % 2 === 0) dust.emitBurst(frame.screenPos.x, frame.screenPos.y, 8);
         exitFrames++;
       } else {
