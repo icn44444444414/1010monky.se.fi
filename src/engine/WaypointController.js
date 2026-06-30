@@ -4,6 +4,9 @@
 // across the screen (alternating sides) as each section scrolls past. Start = the moon; last hop
 // = off the top of the screen (the exit/dissolve). Renderer-agnostic: pure geometry.
 
+import { GridSystem } from './GridSystem.js';
+import { GRID, LANDINGS, EXIT_CELL } from './layout.js';
+
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
@@ -22,38 +25,21 @@ export class WaypointController {
     const W = window.innerWidth;
     const H = window.innerHeight;
     const panels = Array.from(document.querySelectorAll(this.panelSelector));
+    const grid = new GridSystem(GRID.cols, GRID.rows);
 
-    // Start perch: on the moon (matches the CSS moon position), feet just below its center.
+    // Perch: the monkey sits on the bit (matches the CSS bit position).
     const moonY = H * 0.46 + Math.min(W * 0.18, 120) * 0.55;
     const anchors = [{ x: W * 0.5, y: moonY }];
 
-    // One landing per panel, BESIDE the text and strongly alternating left<->right at a
-    // CONSISTENT height — so the monkey swings side to side instead of diving down through
-    // the content. left-aligned text -> sit right; right-aligned -> sit left; centered ->
-    // zig-zag opposite the previous landing.
-    let prevX = W * 0.5;
-    const LX = W * 0.2, RX = W * 0.8;
-    panels.forEach((panel) => {
-      const pr = panel.getBoundingClientRect();
-      let l = Infinity, r = -Infinity, top = Infinity, bot = -Infinity;
-      Array.from(panel.children).forEach((k) => {
-        const b = k.getBoundingClientRect();
-        if (b.width === 0 || b.height === 0) return;
-        l = Math.min(l, b.left); r = Math.max(r, b.right);
-        top = Math.min(top, b.top); bot = Math.max(bot, b.bottom);
-      });
-      const cx = isFinite(l) ? (l + r) / 2 : W * 0.5;
-      const cyMid = isFinite(top) ? (top - pr.top + bot - pr.top) / 2 : H * 0.5;
-      let x;
-      if (cx < W * 0.45) x = RX;                  // text on the left  -> sit on the right
-      else if (cx > W * 0.55) x = LX;             // text on the right -> sit on the left
-      else x = prevX < W * 0.5 ? RX : LX;         // centered text     -> zig-zag opposite the last
-      anchors.push({ x, y: clamp(cyMid + H * 0.14, H * 0.46, H * 0.68) });
-      prevX = x;
+    // One landing per panel — snapped to its authored grid cell (see layout.js; press 'g' to
+    // see the grid + cells). Declarative, designer-controlled, no guessing.
+    panels.forEach((_, i) => {
+      const cell = LANDINGS[i] || LANDINGS[LANDINGS.length - 1] || { col: 6, row: 4 };
+      anchors.push(grid.cell(cell.col, cell.row));
     });
 
-    // Exit: rise to the top-center (still on screen) and dissolve into 1010 there.
-    anchors.push({ x: W * 0.5, y: H * 0.16 });
+    // Exit: rise to the top-center cell and dissolve into 1010 there.
+    anchors.push(grid.cell(EXIT_CELL.col, EXIT_CELL.row));
 
     this.anchors = anchors;
     this.segments = [];

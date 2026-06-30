@@ -9,11 +9,15 @@ import { createRenderer } from './render/ApeRendererFactory.js';
 import { WaypointController } from './engine/WaypointController.js';
 import { ApeStateMachine } from './engine/ApeStateMachine.js';
 import { ScrollChoreographer } from './engine/ScrollChoreographer.js';
+import { GridOverlay } from './engine/GridOverlay.js';
 import { BinaryDustField } from './cursor/BinaryDustField.js';
 
 function boot() {
   const caps = resolveCapabilities();
   const apeLayer = document.getElementById('ape-layer');
+
+  // Dev: press 'g' to toggle the grid + authored landing cells (for tuning layout.js).
+  new GridOverlay().start();
 
   // Banana cursor = the native OS cursor (CSS image). Perfectly smooth, no JS follower.
   if (caps.cursor) {
