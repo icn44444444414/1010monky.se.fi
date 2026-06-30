@@ -16,12 +16,9 @@ function boot() {
   const caps = resolveCapabilities();
   const apeLayer = document.getElementById('ape-layer');
 
-  // Cursor + dust (fine-pointer, motion-ok only).
-  let dust = null;
+  // Banana cursor only (no dust trail) — fine-pointer, motion-ok.
   if (caps.cursor) {
     new BananaCursor().start();
-    dust = new BinaryDustField();
-    dust.start();
   }
 
   // No jump engine under reduced-motion / no-WebGL — show the static perched monkey.
@@ -42,6 +39,10 @@ function boot() {
   renderer.mount(apeLayer).then(() => {
     waypoints.measure();
 
+    // Binary dust bursts at each landing (tied to the jump, not the cursor).
+    const dust = new BinaryDustField();
+    dust.start();
+
     let progress = 0;
     const choreo = new ScrollChoreographer((p) => { progress = p; });
     choreo.start();
@@ -50,8 +51,8 @@ function boot() {
     function loop() {
       const frame = stateMachine.frameAt(progress);
       renderer.setFrame(frame);
-      // dust burst on each fresh landing
-      if (dust && frame.state === 'land' && lastState !== 'land') {
+      // 1010 dust burst on each fresh landing on a section
+      if ((frame.state === 'land' || frame.state === 'exit') && lastState !== frame.state) {
         dust.emitBurst(frame.screenPos.x, frame.screenPos.y);
       }
       lastState = frame.state;
