@@ -1,11 +1,15 @@
-// engine/GridOverlay.js — dev aid: press 'g' to toggle a visible grid + the authored landing
-// cells, so the jump layout (layout.js) is tunable by eye instead of guessed.
+// engine/GridOverlay.js — dev aid: press 'g' to toggle a SQUARE GRID NET over the whole page,
+// with column numbers along the top (sticky) and row numbers down the left edge (scroll with the
+// page). Use it to place jump-point <div> elements: read the cell as (column, row).
+// Cell size = viewport width / 12 (square).
 
-import { GRID, WAYPOINTS, EXIT_CELL } from './layout.js';
+const COLS = 12;
 
 export class GridOverlay {
   constructor() {
-    this.canvas = null;
+    this.net = null;
+    this.topRuler = null;
+    this.leftRuler = null;
     this.on = false;
     this._key = this._key.bind(this);
     this._resize = this._resize.bind(this);
@@ -22,59 +26,73 @@ export class GridOverlay {
   }
 
   _show() {
-    const c = document.createElement('canvas');
-    c.id = 'grid-overlay';
-    Object.assign(c.style, { position: 'fixed', inset: '0', zIndex: '70', pointerEvents: 'none' });
-    document.body.appendChild(c);
-    this.canvas = c;
+    // full-page square net (scrolls with the document)
+    const net = document.createElement('div');
+    net.id = 'page-grid';
+    Object.assign(net.style, { position: 'absolute', left: '0', top: '0', width: '100%', pointerEvents: 'none', zIndex: '65' });
+    document.body.appendChild(net);
+    this.net = net;
+
+    // sticky COLUMN ruler across the top
+    const top = document.createElement('div');
+    top.id = 'page-grid-cols';
+    Object.assign(top.style, {
+      position: 'fixed', left: '0', top: '0', width: '100%', height: '18px', display: 'flex',
+      pointerEvents: 'none', zIndex: '67', font: '11px ui-monospace, monospace',
+      color: 'rgba(88,224,138,0.95)', background: 'rgba(10,11,16,0.65)',
+    });
+    for (let c = 1; c <= COLS; c++) {
+      const s = document.createElement('div');
+      s.textContent = String(c);
+      Object.assign(s.style, { flex: '1', textAlign: 'center', borderRight: '1px solid rgba(88,224,138,0.25)' });
+      top.appendChild(s);
+    }
+    document.body.appendChild(top);
+    this.topRuler = top;
+
+    // ROW ruler down the left edge (scrolls with the page)
+    const left = document.createElement('div');
+    left.id = 'page-grid-rows';
+    Object.assign(left.style, {
+      position: 'absolute', left: '0', top: '0', width: '22px', pointerEvents: 'none', zIndex: '66',
+      font: '10px ui-monospace, monospace', color: 'rgba(88,224,138,0.9)',
+    });
+    document.body.appendChild(left);
+    this.leftRuler = left;
+
     this.on = true;
     window.addEventListener('resize', this._resize);
     this._resize();
   }
 
   _hide() {
-    if (this.canvas) this.canvas.remove();
-    this.canvas = null;
+    [this.net, this.topRuler, this.leftRuler].forEach((el) => el && el.remove());
+    this.net = this.topRuler = this.leftRuler = null;
     this.on = false;
     window.removeEventListener('resize', this._resize);
   }
 
   _resize() {
-    if (!this.canvas) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    this.canvas.width = window.innerWidth * dpr;
-    this.canvas.height = window.innerHeight * dpr;
-    this.canvas.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
-    this._draw();
-  }
+    if (!this.net) return;
+    const cell = Math.max(28, Math.round(window.innerWidth / COLS));
+    const docH = document.documentElement.scrollHeight;
 
-  _draw() {
-    const ctx = this.canvas.getContext('2d');
-    const W = window.innerWidth, H = window.innerHeight;
-    const cw = W / GRID.cols, ch = H / GRID.rows;
-    ctx.clearRect(0, 0, W, H);
+    this.net.style.height = docH + 'px';
+    this.net.style.backgroundImage =
+      `repeating-linear-gradient(90deg, rgba(88,224,138,0.22) 0 1px, transparent 1px ${cell}px),` +
+      `repeating-linear-gradient(0deg, rgba(88,224,138,0.16) 0 1px, transparent 1px ${cell}px)`;
 
-    // grid lines
-    ctx.strokeStyle = 'rgba(88,224,138,0.22)';
-    ctx.lineWidth = 1;
-    for (let c = 0; c <= GRID.cols; c++) { ctx.beginPath(); ctx.moveTo(c * cw, 0); ctx.lineTo(c * cw, H); ctx.stroke(); }
-    for (let r = 0; r <= GRID.rows; r++) { ctx.beginPath(); ctx.moveTo(0, r * ch); ctx.lineTo(W, r * ch); ctx.stroke(); }
-
-    // col/row labels
-    ctx.font = '11px ui-monospace, monospace';
-    ctx.fillStyle = 'rgba(88,224,138,0.65)';
-    for (let c = 1; c <= GRID.cols; c++) ctx.fillText(String(c), (c - 0.5) * cw - 3, 13);
-    for (let r = 1; r <= GRID.rows; r++) ctx.fillText(String(r), 4, (r - 0.5) * ch + 4);
-
-    // authored waypoint cells (the jump path)
-    [...WAYPOINTS, EXIT_CELL].forEach((cell, i) => {
-      const x = (cell.col - 1) * cw, y = (cell.row - 1) * ch;
-      ctx.fillStyle = 'rgba(255,210,63,0.16)';
-      ctx.fillRect(x, y, cw, ch);
-      ctx.strokeStyle = 'rgba(255,210,63,0.9)';
-      ctx.strokeRect(x, y, cw, ch);
-      ctx.fillStyle = 'rgba(255,210,63,1)';
-      ctx.fillText(i < WAYPOINTS.length ? 'W' + i : 'EXIT', x + 6, y + 16);
-    });
+    // (re)build row numbers
+    const left = this.leftRuler;
+    left.innerHTML = '';
+    left.style.height = docH + 'px';
+    left.style.background = 'rgba(10,11,16,0.45)';
+    const rows = Math.ceil(docH / cell);
+    for (let r = 1; r <= rows; r++) {
+      const s = document.createElement('div');
+      s.textContent = String(r);
+      Object.assign(s.style, { position: 'absolute', left: '2px', top: (r - 1) * cell + 2 + 'px' });
+      left.appendChild(s);
+    }
   }
 }
