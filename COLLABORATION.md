@@ -115,3 +115,42 @@ conversation context required.
 Codex works async on its branches; Claude integrates, reviews, runs the build, and previews on the VPS
 (`85.190.99.188`, served by nginx like the other static sites). Contract frozen; changes flow only
 through PRs.
+
+## 10. Working style — both agents reason like senior front-end engineers
+
+Codex is treated as a **senior front-end developer**, and is expected to *think*, not just type:
+
+- **Plan before code.** Every PR opens with a short plan: what it implements (brief §/milestone), the
+  approach, the tradeoffs considered (jump feel vs perf, library choice, fallbacks), and what it
+  deliberately left out.
+- **Reason about the *feel*.** The jump must feel alive — reason about easing, anticipation, squash &
+  stretch, landing weight, timing against scroll. Tune, don't guess.
+- **Self-review before requesting review.** Confirm: contract untouched, no engine↔render coupling,
+  `npm run build` + `npm run lint` pass, reduced-motion/no-WebGL paths handled, 60fps held.
+- **Surface uncertainty.** If a contract change is genuinely needed, open a `contract: …` PR and say
+  why — don't work around the seam.
+
+(Claude holds the same bar on the engine side and reviews every Codex PR adversarially with
+`/code-review`.)
+
+## 11. Attribution — credit where it's due
+
+Both agents are credited in the git history as real contributors:
+
+- **Authorship:** each agent authors its own commits/PRs; PR authorship shows who built it.
+- **Co-author trailers** on every commit (this is how GitHub attributes contributors):
+  - Codex's commits: `Co-Authored-By: Codex <codex@openai.com>`
+  - Claude's commits: `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`
+  - When one agent integrates the other's work, **credit both**.
+- **Reviews** name the reviewer in the PR thread, so the review work is visible too.
+
+The result: the repo history honestly reflects that the rich rendering/FX layer is **Codex's senior
+front-end work**, and the engine/integration is Claude's — both on the record.
+
+## 12. The stack is expert-grade on purpose
+
+PixiJS (WebGL pixel rendering + filters), GSAP with MotionPath/CustomEase/Physics2D, optional Matter.js
+physics, Lenis, Tailwind — this is the toolkit a **senior interactive front-end engineer** reaches for.
+It is *not* over-engineering: "a visually rich pixel monkey jumping section-to-section at 60fps with a
+banana cursor and a 1010 dissolve" genuinely requires this caliber of library. Use the full stack with
+intent; justify each heavy dependency by the result it buys.
