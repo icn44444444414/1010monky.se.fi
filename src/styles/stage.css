@@ -53,19 +53,19 @@ body {
 #moon {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
-  /* soft specular highlight + craters over the blue sphere — more dimensional, still subtle */
+  border-radius: 8px;            /* a crisp square "bit", not a moon */
+  /* a glowing blue pixel BIT: faint pixel grid + 3D sheen, same bright blue */
   background:
-    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 24%),
-    radial-gradient(circle at 63% 42%, rgba(60, 85, 130, 0.40), rgba(60, 85, 130, 0) 9%),
-    radial-gradient(circle at 45% 64%, rgba(60, 85, 130, 0.36), rgba(60, 85, 130, 0) 13%),
-    radial-gradient(circle at 72% 66%, rgba(60, 85, 130, 0.30), rgba(60, 85, 130, 0) 7%),
-    radial-gradient(circle at 33% 30%, rgba(60, 85, 130, 0.26), rgba(60, 85, 130, 0) 6%),
-    radial-gradient(circle at 38% 34%, #ffffff 0%, var(--moon) 36%, #9bb6e0 64%, #6f86b4 100%);
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 16px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 16px),
+    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 42%),
+    linear-gradient(145deg, #ddeaff 0%, #aecaf0 48%, #88a2cf 100%);
   box-shadow:
-    0 0 70px 16px rgba(120, 170, 255, 0.28),
-    inset -22px -18px 50px rgba(20, 30, 60, 0.55),
-    inset 14px 12px 30px rgba(255, 255, 255, 0.10);
+    0 0 84px 18px rgba(140, 185, 255, 0.34),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.20),
+    inset -18px -16px 40px rgba(25, 38, 70, 0.42),
+    inset 16px 14px 30px rgba(255, 255, 255, 0.18);
+  image-rendering: pixelated;
 }
 
 /* Panels — full-height scroll waypoints */
