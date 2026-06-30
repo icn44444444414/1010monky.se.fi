@@ -1,0 +1,39 @@
+# dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# build output
+dist/
+dist-ssr/
+*.local
+
+# env / secrets
+.env
+.env.*
+!.env.sample
+
+# editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# caches
+.cache/
+.vite/
+.eslintcache
+
+# large 3D source files (keep compressed .glb in public/, ignore raw authoring files)
+*.blend
+*.blend1
+*.fbx
+*.max
