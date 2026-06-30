@@ -6,7 +6,7 @@
 
 import { makeIdleFrame } from '../render/ApeRenderer.js';
 
-const T = { crouch: 0.10, launch: 0.20, land: 0.82 }; // thresholds within a hop
+const T = { crouch: 0.11, launch: 0.20, land: 0.88 }; // thresholds within a hop
 
 /** @param {number} t @returns {{state:import('../render/ApeRenderer.js').ApeState, squash:number}} */
 function phase(t) {
@@ -20,7 +20,9 @@ function phase(t) {
   }
   if (t < T.land) return { state: 'airborne', squash: 0 };
   const tt = (t - T.land) / (1 - T.land);              // landing pop that settles
-  return { state: 'land', squash: 0.85 * Math.pow(1 - tt, 2) };
+  const impact = 0.95 * Math.pow(1 - tt, 3);
+  const rebound = 0.16 * Math.sin(tt * Math.PI) * (1 - tt);
+  return { state: 'land', squash: impact + rebound };
 }
 
 export class ApeStateMachine {
@@ -56,7 +58,7 @@ export class ApeStateMachine {
       } else {
         f.state = 'exit';
         f.squash = 0;
-        f.exit = Math.min(1, (s.exitT - T.launch) / 0.35); // dissolve completes by exitT ~0.55, then gone
+        f.exit = Math.min(1, (s.exitT - T.launch) / 0.3); // dissolve completes by exitT ~0.5, then gone
       }
     } else {
       f.state = ph.state;
