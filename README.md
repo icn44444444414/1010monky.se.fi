@@ -1,6 +1,6 @@
-# 1010monky.se — Binary Monkey Pixel Mascot Prototype
+# 1010monky.se.fi — Binary Monkey Pixel Mascot Prototype
 
-Interactive mascot prototype for **1010monky.se**: a **pixel-art monkey** (the `1010` = binary, so the
+Interactive mascot prototype for the **1010monky.se** site: a **pixel-art monkey** (the `1010` = binary, so the
 mascot is *made of bits*) that replaces the static moon logo and **jumps between page panels as you
 scroll**, launching from the moon and **dissolving into a stream of 1s and 0s** as it leaps off-screen
 at the footer. The cursor becomes a **pixel banana** trailing **yellow dust and falling binary digits**.

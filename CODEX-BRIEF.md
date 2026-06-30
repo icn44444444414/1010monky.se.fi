@@ -1,4 +1,4 @@
-# Codex Build Brief — 1010monky.se "Binary Monkey" Pixel Mascot Prototype
+# Codex Build Brief — 1010monky.se.fi "Binary Monkey" Pixel Mascot Prototype
 
 > **Read this whole file before writing code.** Senior front-end + interaction-design spec for a
 > high-value engagement. Build the **engine and integration** to a senior standard. The hero **pixel
@@ -39,7 +39,7 @@ sheet a drop-in.
 ## 3. Scope of THIS deliverable
 
 **In scope:**
-1. Vite + TS project (`1010monky.se/`) loading a panel-based stage.
+1. Vite + TS project (`1010monky.se.fi/`) loading a panel-based stage.
 2. A **pixel-art monkey** (PixiJS sprite) driven by a **scroll-linked waypoint system**.
 3. A **state machine** (idle/perch → crouch → launch → airborne → land → exit-dissolve).
 4. **Pixel banana cursor** + **yellow-dust-and-binary** particle trail.
@@ -87,7 +87,7 @@ budget in §11 via lazy-load + quality tiers; heavy ≠ unoptimized.)
 ## 5. Folder structure
 
 ```
-1010monky.se/
+1010monky.se.fi/
   index.html                 # panel-based stage (bloon hero markup as stand-in; panels = waypoints)
   public/
     stage/                   # stage assets copied in (no live hotlinks)
