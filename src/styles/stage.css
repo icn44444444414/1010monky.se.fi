@@ -54,7 +54,12 @@ body {
   width: 100%;
   height: 100%;
   border-radius: 50%;
+  /* a few soft craters layered over the same blue sphere — everything else unchanged */
   background:
+    radial-gradient(circle at 63% 42%, rgba(70, 95, 140, 0.34), rgba(70, 95, 140, 0) 9%),
+    radial-gradient(circle at 45% 64%, rgba(70, 95, 140, 0.30), rgba(70, 95, 140, 0) 13%),
+    radial-gradient(circle at 72% 66%, rgba(70, 95, 140, 0.24), rgba(70, 95, 140, 0) 7%),
+    radial-gradient(circle at 33% 30%, rgba(70, 95, 140, 0.22), rgba(70, 95, 140, 0) 6%),
     radial-gradient(circle at 38% 34%, #ffffff 0%, var(--moon) 36%, #9bb6e0 64%, #6f86b4 100%);
   box-shadow:
     0 0 60px 12px rgba(120, 170, 255, 0.25),
