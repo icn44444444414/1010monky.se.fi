@@ -10,15 +10,23 @@
 
 export const GRID = { cols: 12, rows: 12 };
 
-// Donkey-Kong DESCENT: the monkey only ever moves DOWN (no jarring up-jumps), section by
-// section, with a free-fall near the end, then leaps away. Rows increase = lower on screen.
-export const LANDINGS = [
-  { col: 3,  row: 4 },  // 0  hero            -> upper area, start the descent
-  { col: 10, row: 5 },  // 1  "Like the moon" (left text)  -> right, a step down
-  { col: 3,  row: 6 },  // 2  "1010 = binary" (right text) -> left, down
-  { col: 10, row: 7 },  // 3  "Right to left" (left text)  -> right, down
-  { col: 3,  row: 7 },  // 4  "What we do"    (center)     -> left, beside the text (not up top)
-  { col: 10, row: 11 }, // 5  contatti        (center)     -> right, FREE-FALL down
+// THE JUMP PATH — an ordered list of grid cells the monkey hops through, top to bottom.
+// This is now DECOUPLED from the page sections: add as many waypoints as you like for a denser
+// Donkey-Kong staircase (many small platform hops). Each entry = one landing the monkey jumps to.
+// Rows increase = lower on screen. Keep it mostly descending (avoid jarring up-jumps); a big
+// downward step (>~2 rows) auto-becomes a weighty "free-fall" ledge drop.
+// Press 'g' in the browser to see the grid + every waypoint and tune these by eye.
+export const WAYPOINTS = [
+  { col: 3,  row: 3 },
+  { col: 10, row: 4 },
+  { col: 4,  row: 5 },
+  { col: 9,  row: 6 },
+  { col: 3,  row: 6 },
+  { col: 10, row: 7 },
+  { col: 5,  row: 8 },
+  { col: 9,  row: 8 },
+  { col: 3,  row: 9 },
+  { col: 11, row: 12 }, // big step -> free-fall
 ];
 
 // Final leap: jump away to the top-center and dissolve into 1010.

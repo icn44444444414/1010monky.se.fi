@@ -38,7 +38,7 @@ git push -u origin feat/jump-feel      # push needs a token/collaborator (repo i
     main.js                      # bootstrap: capability gate -> renderer -> engine loop -> dust/cursor
     styles/stage.css             # panel layout, the glowing pixel "bit", custom cursor
     engine/
-      layout.js          ★       # THE JUMP LAYOUT — grid size + per-section landing CELLS (edit this)
+      layout.js          ★       # THE JUMP PATH — grid size + WAYPOINTS[] (ordered cells the monkey hops)
       GridSystem.js              # cols x rows -> viewport px
       GridOverlay.js             # press 'g' in the browser to SEE the grid + landing cells
       WaypointController.js ★    # anchors (from grid cells) -> bezier arcs + the jump CURVE (arc/ease)
@@ -56,8 +56,9 @@ git push -u origin feat/jump-feel      # push needs a token/collaborator (repo i
 
 ## 3. The tools you have (use these instead of guessing/screenshots)
 
-- **Move a landing:** edit `LANDINGS[i]` (and `EXIT_CELL`) in `src/engine/layout.js` — each is a
-  `{ col, row }` on a `GRID.cols × GRID.rows` grid (col 1 = left, row 1 = top). Currently **12×12**.
+- **Move/add a hop:** edit the `WAYPOINTS[]` array (and `EXIT_CELL`) in `src/engine/layout.js` — each
+  is a `{ col, row }` on the `GRID.cols × GRID.rows` grid (currently **12×12**). The jump path is now
+  **decoupled from the sections** — add as many waypoints as you want for a denser DK staircase.
 - **See the grid:** press **`g`** in the browser → overlay of the grid + the authored cells
   (`P0`–`P5`, `EXIT`) with col/row numbers. Press `g` again to hide.
 - **Self-play (verify without screenshots):** `window.__sm.frameAt(progress)` returns the exact

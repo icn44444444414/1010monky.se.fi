@@ -5,7 +5,7 @@
 // = off the top of the screen (the exit/dissolve). Renderer-agnostic: pure geometry.
 
 import { GridSystem } from './GridSystem.js';
-import { GRID, LANDINGS, EXIT_CELL } from './layout.js';
+import { GRID, WAYPOINTS, EXIT_CELL } from './layout.js';
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
@@ -28,19 +28,15 @@ export class WaypointController {
   measure() {
     const W = window.innerWidth;
     const H = window.innerHeight;
-    const panels = Array.from(document.querySelectorAll(this.panelSelector));
     const grid = new GridSystem(GRID.cols, GRID.rows);
 
     // Perch: the monkey sits on the bit (matches the CSS bit position).
     const moonY = H * 0.46 + Math.min(W * 0.18, 120) * 0.55;
     const anchors = [{ x: W * 0.5, y: moonY }];
 
-    // One landing per panel — snapped to its authored grid cell (see layout.js; press 'g' to
-    // see the grid + cells). Declarative, designer-controlled, no guessing.
-    panels.forEach((_, i) => {
-      const cell = LANDINGS[i] || LANDINGS[LANDINGS.length - 1] || { col: 6, row: 4 };
-      anchors.push(grid.cell(cell.col, cell.row));
-    });
+    // Hop through every authored waypoint (the jump path, layout.js; press 'g' to see them),
+    // then the exit. Decoupled from the sections — add as many cells as you like.
+    WAYPOINTS.forEach((cell) => anchors.push(grid.cell(cell.col, cell.row)));
 
     // Exit: rise to the top-center cell and dissolve into 1010 there.
     anchors.push(grid.cell(EXIT_CELL.col, EXIT_CELL.row));

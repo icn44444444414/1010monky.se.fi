@@ -1,7 +1,7 @@
 // engine/GridOverlay.js — dev aid: press 'g' to toggle a visible grid + the authored landing
 // cells, so the jump layout (layout.js) is tunable by eye instead of guessed.
 
-import { GRID, LANDINGS, EXIT_CELL } from './layout.js';
+import { GRID, WAYPOINTS, EXIT_CELL } from './layout.js';
 
 export class GridOverlay {
   constructor() {
@@ -66,15 +66,15 @@ export class GridOverlay {
     for (let c = 1; c <= GRID.cols; c++) ctx.fillText(String(c), (c - 0.5) * cw - 3, 13);
     for (let r = 1; r <= GRID.rows; r++) ctx.fillText(String(r), 4, (r - 0.5) * ch + 4);
 
-    // authored landing cells
-    [...LANDINGS, EXIT_CELL].forEach((cell, i) => {
+    // authored waypoint cells (the jump path)
+    [...WAYPOINTS, EXIT_CELL].forEach((cell, i) => {
       const x = (cell.col - 1) * cw, y = (cell.row - 1) * ch;
       ctx.fillStyle = 'rgba(255,210,63,0.16)';
       ctx.fillRect(x, y, cw, ch);
       ctx.strokeStyle = 'rgba(255,210,63,0.9)';
       ctx.strokeRect(x, y, cw, ch);
       ctx.fillStyle = 'rgba(255,210,63,1)';
-      ctx.fillText(i < LANDINGS.length ? 'P' + i : 'EXIT', x + 6, y + 16);
+      ctx.fillText(i < WAYPOINTS.length ? 'W' + i : 'EXIT', x + 6, y + 16);
     });
   }
 }
