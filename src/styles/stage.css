@@ -49,7 +49,7 @@ body {
   z-index: 0;
   pointer-events: none;
 }
-#moonStage { width: min(46vw, 320px); height: min(46vw, 320px); }
+#moonStage { width: min(36vw, 240px); height: min(36vw, 240px); }
 #moon {
   width: 100%;
   height: 100%;

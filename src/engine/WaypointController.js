@@ -24,7 +24,7 @@ export class WaypointController {
     const panels = Array.from(document.querySelectorAll(this.panelSelector));
 
     // Start perch: on the moon (matches the CSS moon position), feet just below its center.
-    const moonY = H * 0.46 + Math.min(W * 0.23, 160) * 0.55;
+    const moonY = H * 0.46 + Math.min(W * 0.18, 120) * 0.55;
     const anchors = [{ x: W * 0.5, y: moonY }];
 
     // One landing per panel, alternating sides so the monkey clearly shows both directions.
