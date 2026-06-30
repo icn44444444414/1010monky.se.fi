@@ -58,12 +58,31 @@ sheet a drop-in.
 | Pixel fidelity | nearest-neighbor scaling, integer upscale | crisp pixels at any DPR |
 | Retro FX | PixiJS filters (subtle scanline/CRT, glow on moon) | tasteful, off under reduced-motion |
 | Binary/dust particles | lightweight custom emitter on a Pixi `ParticleContainer` | yellow dust + falling `0/1` glyphs |
-| Language | **TypeScript** | typed contracts below are normative |
+| Smooth scroll | **Lenis** (optional) | buttery inertia scroll that ScrollTrigger syncs to |
+| **Advanced CSS** | modern CSS: custom properties, container queries, scroll-driven animations, blend modes, `image-rendering: pixelated` | the CSS layer is first-class — crisp pixels, retro glow, layout |
+| Page/UI styling | **Tailwind CSS** (optional, recommended) | fast utility layout for the page/stage chrome; the mascot itself is Pixi/canvas, not CSS |
+| Language | **JavaScript (ES modules)** — *no TypeScript* | plain JS + CSS; JSDoc typedefs keep the contracts normative |
 | Lint/format | ESLint + Prettier | |
+
+> **Engineer's discretion:** the goal is the *best-looking ape jump*, not a fixed shopping list. The
+> tools above are the recommended baseline — substitute or add whatever genuinely serves the result
+> (Tailwind if it's faster, a physics lib for liveliness, a better particle system). Just keep it
+> plain-JS + CSS land, keep the pixel aesthetic, and respect the perf budget (§11).
 
 Rationale: PixiJS is the senior choice for performant pixel-art 2D with shader effects — exactly the
 "rich library, very visually rich" bar, in the *pixel* idiom the binary concept calls for. (3D/Three.js
 is explicitly NOT used — wrong aesthetic for an 8-bit monkey.)
+
+**Library budget — the jump comes first.** Keep the *language* to plain JavaScript + CSS (no
+TypeScript, no app framework like React/Vue), but **library weight is NOT a constraint**: pull in any
+heavy JS/CSS library that makes the ape's jump look genuinely better. Encouraged where they earn their
+weight:
+- **GSAP plugins** — `MotionPathPlugin` (arc paths), `CustomEase`/`CustomBounce` (natural launch +
+  squashy landing), `Physics2DPlugin` (gravity/velocity-driven arcs) — all free now.
+- **Matter.js** (optional) — real rigid-body physics if a tuned GSAP arc isn't lively enough.
+- **PixiJS filters** + a particle lib for the dust/binary FX.
+Choose per result quality, not bundle size — the jump must feel *alive*. (Still respect the perf
+budget in §11 via lazy-load + quality tiers; heavy ≠ unoptimized.)
 
 ## 5. Folder structure
 
@@ -77,25 +96,25 @@ is explicitly NOT used — wrong aesthetic for an 8-bit monkey.)
       monkey.atlas.json
     cursor/banana.png        # pixel banana (nearest-neighbor)
   src/
-    main.ts
+    main.js
     engine/
-      WaypointController.ts   # DOM panels -> stage coords, builds jump arcs
-      ScrollChoreographer.ts  # GSAP ScrollTrigger: scroll progress -> jumps (scrub)
-      ApeStateMachine.ts      # idle/crouch/launch/airborne/land/exit transitions
+      WaypointController.js   # DOM panels -> stage coords, builds jump arcs
+      ScrollChoreographer.js  # GSAP ScrollTrigger: scroll progress -> jumps (scrub)
+      ApeStateMachine.js      # idle/crouch/launch/airborne/land/exit transitions
     render/
-      ApeRenderer.ts          # INTERFACE (swap seam) + types
-      PixiApeRenderer.ts      # PixiJS sprite implementation (placeholder atlas)
-      ApeRendererFactory.ts   # picks renderer / fallback by capability
+      ApeRenderer.js          # JSDoc INTERFACE (swap seam) + typedefs
+      PixiApeRenderer.js      # PixiJS sprite implementation (placeholder atlas)
+      ApeRendererFactory.js   # picks renderer / fallback by capability
     cursor/
-      BananaCursor.ts         # pixel banana follower
-      BinaryDustField.ts      # yellow dust + falling 0/1 particles
+      BananaCursor.js         # pixel banana follower
+      BinaryDustField.js      # yellow dust + falling 0/1 particles
     fx/
-      filters.ts              # scanline/CRT/glow setup (reduced-motion aware)
+      filters.js              # scanline/CRT/glow setup (reduced-motion aware)
     a11y/
-      capability.ts           # WebGL + reduced-motion + touch detection
-      Fallback.ts             # static pixel-monkey image / no-motion path
+      capability.js           # WebGL + reduced-motion + touch detection
+      Fallback.js             # static pixel-monkey image / no-motion path
     styles/ stage.css, cursor.css
-  vite.config.ts
+  vite.config.js
   README.md
 ```
 
@@ -107,28 +126,27 @@ is explicitly NOT used — wrong aesthetic for an 8-bit monkey.)
 - All rendering goes through **`ApeRenderer`**. The engine NEVER imports PixiJS directly. The real
   sprite sheet (or an alternate art set) swaps in via `ApeRendererFactory` with no engine change.
 
-```ts
-// render/ApeRenderer.ts  (normative contract)
-export type ApeState =
-  | 'perch' | 'crouch' | 'launch' | 'airborne' | 'land' | 'exit';
-export type Facing = 'left' | 'right';
-
-export interface ApeFrame {
-  state: ApeState;
-  facing: Facing;               // flips/sprite-selects directional poses
-  progress: number;             // 0..1 within current state/segment
-  screenPos: { x: number; y: number };  // stage-pixel position
-  squash: number;               // 0..1 squash&stretch hint
-  vy: number;                   // vertical velocity sign -> rise/fall frame
-}
-
-export interface ApeRenderer {
-  mount(container: HTMLElement): Promise<void>;  // load atlas, set up Pixi app, pixel scaling
-  setFrame(frame: ApeFrame): void;               // called every rAF tick
-  resize(w: number, h: number): void;
-  setQuality(tier: 'high' | 'medium' | 'low'): void;  // toggles FX filters
-  dispose(): void;
-}
+```js
+// render/ApeRenderer.js  (normative contract — JSDoc typedefs, plain JS)
+/**
+ * @typedef {'perch'|'crouch'|'launch'|'airborne'|'land'|'exit'} ApeState
+ * @typedef {'left'|'right'} Facing
+ *
+ * @typedef {Object} ApeFrame
+ * @property {ApeState} state
+ * @property {Facing}   facing                  // flips/sprite-selects directional poses
+ * @property {number}   progress                // 0..1 within current state/segment
+ * @property {{x:number, y:number}} screenPos   // stage-pixel position
+ * @property {number}   squash                  // 0..1 squash&stretch hint
+ * @property {number}   vy                      // vertical velocity sign -> rise/fall frame
+ *
+ * @typedef {Object} ApeRenderer
+ * @property {(container: HTMLElement) => Promise<void>} mount      // load atlas, set up Pixi, pixel scaling
+ * @property {(frame: ApeFrame) => void}                 setFrame   // called every rAF tick
+ * @property {(w: number, h: number) => void}            resize
+ * @property {(tier: 'high'|'medium'|'low') => void}     setQuality // toggles FX filters
+ * @property {() => void}                                dispose
+ */
 ```
 
 ## 7. Architecture & data flow
@@ -246,6 +264,7 @@ frames — goes to the pixel artist; you only consume the resulting atlas via th
 
 ## 16. Coding standards
 
-Typed module boundaries (interfaces above are normative), no engine→render concrete coupling, small
-focused modules, JSDoc on public methods, a two-command `README.md`. Pixel-perfect by default; clarity
-over cleverness — we are continuing this codebase.
+**Plain JavaScript (ES modules) — no TypeScript.** JSDoc-typed module boundaries (the typedefs above
+are normative), no engine→render concrete coupling, small focused modules, JSDoc on public methods, a
+two-command `README.md`. Stay to **advanced CSS + advanced JS libraries** only. Pixel-perfect by
+default; clarity over cleverness — we are continuing this codebase.

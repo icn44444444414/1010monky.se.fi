@@ -12,10 +12,14 @@ hero pixel sprite is an authored sprite sheet that drops into a clean renderer i
 Base prototype — engine-first. See [`CODEX-BRIEF.md`](./CODEX-BRIEF.md) for the full build spec.
 
 ## Tech stack
-- **Vite** + **TypeScript** (ES modules)
-- **GSAP** (ScrollTrigger + MotionPathPlugin) — scroll-driven jump choreography
+- **Vite** + **JavaScript** (ES modules; JSDoc-typed contracts) — plain JS + CSS, no TypeScript
+- **GSAP** (+ ScrollTrigger, MotionPath, CustomEase/Physics2D) — scroll-driven jump choreography
 - **PixiJS v8** (WebGL 2D) — pixel sprite rendering + retro filters (nearest-neighbor, crisp pixels)
+- **Tailwind CSS** (optional) — utility layout for page/stage chrome
 - Custom Pixi particle emitter — yellow dust + falling `0/1` binary glyphs
+
+Library weight is open — heavy JS/CSS libraries are welcome wherever they make the ape's jump look
+better; engineer's discretion to pick the best tools (kept performant via lazy-load + quality tiers).
 
 ## Collaboration model (Claude + Codex)
 The typed interfaces in the brief (`ApeRenderer`, `ApeFrame`, `WaypointController`) are the
