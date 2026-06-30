@@ -1,11 +1,12 @@
-# BLOON — Jumping Ape Mascot Prototype
+# 1010monky.se — Binary Monkey Pixel Mascot Prototype
 
-Interactive mascot prototype for the BLOON agency site: a friendly cartoon ape that replaces the
-static moon logo and **jumps between page panels as you scroll**, launching from the blue moon and
-leaping off-screen at the footer. The cursor becomes a **banana** trailing **yellow dust**.
+Interactive mascot prototype for **1010monky.se**: a **pixel-art monkey** (the `1010` = binary, so the
+mascot is *made of bits*) that replaces the static moon logo and **jumps between page panels as you
+scroll**, launching from the moon and **dissolving into a stream of 1s and 0s** as it leaps off-screen
+at the footer. The cursor becomes a **pixel banana** trailing **yellow dust and falling binary digits**.
 
-This repo is the **base/wireframe** — a senior-architected foundation we keep building on. The
-"visually rich" hero ape is a commissioned asset that drops into a clean renderer interface.
+This repo is the **base/wireframe** — a senior-architected foundation we keep building on. The polished
+hero pixel sprite is an authored sprite sheet that drops into a clean renderer interface.
 
 ## Status
 Base prototype — engine-first. See [`CODEX-BRIEF.md`](./CODEX-BRIEF.md) for the full build spec.
@@ -13,8 +14,8 @@ Base prototype — engine-first. See [`CODEX-BRIEF.md`](./CODEX-BRIEF.md) for th
 ## Tech stack
 - **Vite** + **TypeScript** (ES modules)
 - **GSAP** (ScrollTrigger + MotionPathPlugin) — scroll-driven jump choreography
-- **Three.js** (GLTFLoader + DRACOLoader) — the 3D ape (real angles, lighting)
-- Custom canvas particle system — banana cursor + yellow dust
+- **PixiJS v8** (WebGL 2D) — pixel sprite rendering + retro filters (nearest-neighbor, crisp pixels)
+- Custom Pixi particle emitter — yellow dust + falling `0/1` binary glyphs
 
 ## Collaboration model (Claude + Codex)
 The typed interfaces in the brief (`ApeRenderer`, `ApeFrame`, `WaypointController`) are the
@@ -23,7 +24,7 @@ The typed interfaces in the brief (`ApeRenderer`, `ApeFrame`, `WaypointControlle
 | Lane | Owner | Modules |
 |---|---|---|
 | Scaffold + engine + integration + review | **Claude** | `WaypointController`, `ScrollChoreographer`, `ApeStateMachine`, a11y/perf, builds, deploy |
-| Rich rendering layer | **Codex** | `ThreeApeRenderer`, `BananaCursor`, `DustField`, model wiring |
+| Rich rendering layer | **Codex** | `PixiApeRenderer`, `BananaCursor`, `BinaryDustField`, sprite wiring |
 
 ### Branch flow
 - `main` — stable
@@ -39,5 +40,5 @@ npm run build    # static dist/ for nginx
 ```
 
 ## Deploy
-Builds to a static `dist/` — served by nginx like any static site (3D runs client-side; Node only at
-build time). See the deploy section in `CODEX-BRIEF.md`.
+Builds to a static `dist/` — served by nginx like any static site (rendering runs client-side; Node
+only at build time). See the deploy section in `CODEX-BRIEF.md`.
