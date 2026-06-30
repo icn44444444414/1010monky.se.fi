@@ -27,8 +27,12 @@ export class WaypointController {
     const moonY = H * 0.46 + Math.min(W * 0.18, 120) * 0.55;
     const anchors = [{ x: W * 0.5, y: moonY }];
 
-    // One landing per panel — placed BESIDE that panel's text (in the empty space), like a
-    // companion sitting next to what you're reading. Centered text: land just below it.
+    // One landing per panel, BESIDE the text and strongly alternating left<->right at a
+    // CONSISTENT height — so the monkey swings side to side instead of diving down through
+    // the content. left-aligned text -> sit right; right-aligned -> sit left; centered ->
+    // zig-zag opposite the previous landing.
+    let prevX = W * 0.5;
+    const LX = W * 0.2, RX = W * 0.8;
     panels.forEach((panel) => {
       const pr = panel.getBoundingClientRect();
       let l = Infinity, r = -Infinity, top = Infinity, bot = -Infinity;
@@ -38,15 +42,14 @@ export class WaypointController {
         l = Math.min(l, b.left); r = Math.max(r, b.right);
         top = Math.min(top, b.top); bot = Math.max(bot, b.bottom);
       });
-      if (!isFinite(l)) { anchors.push({ x: W * 0.5, y: H * 0.6 }); return; }
-      const cx = (l + r) / 2;                      // content horizontal center (viewport x)
-      const cyMid = (top - pr.top + bot - pr.top) / 2; // content vertical center when the panel fills the screen
-      const margin = Math.max(56, W * 0.05);
-      let x, y;
-      if (cx < W * 0.42) { x = r + margin; y = cyMid; }        // text on the left  -> sit to its right
-      else if (cx > W * 0.58) { x = l - margin; y = cyMid; }   // text on the right -> sit to its left
-      else { x = W * 0.5; y = (bot - pr.top) + margin; }       // centered text     -> sit just below it
-      anchors.push({ x: clamp(x, 70, W - 70), y: clamp(y, 90, H - 90) });
+      const cx = isFinite(l) ? (l + r) / 2 : W * 0.5;
+      const cyMid = isFinite(top) ? (top - pr.top + bot - pr.top) / 2 : H * 0.5;
+      let x;
+      if (cx < W * 0.45) x = RX;                  // text on the left  -> sit on the right
+      else if (cx > W * 0.55) x = LX;             // text on the right -> sit on the left
+      else x = prevX < W * 0.5 ? RX : LX;         // centered text     -> zig-zag opposite the last
+      anchors.push({ x, y: clamp(cyMid, H * 0.36, H * 0.58) });
+      prevX = x;
     });
 
     // Exit: rise to the top-center (still on screen) and dissolve into 1010 there.
@@ -59,7 +62,7 @@ export class WaypointController {
       const p1 = anchors[i + 1];
       const dx = p1.x - p0.x;
       const isExit = i === anchors.length - 2;
-      const arc = isExit ? H * 0.5 : clamp(60 + Math.abs(dx) * 0.5, 110, 300);
+      const arc = isExit ? H * 0.42 : clamp(40 + Math.abs(dx) * 0.22, 56, 140);
       const c = { x: (p0.x + p1.x) / 2, y: Math.min(p0.y, p1.y) - arc };
       this.segments.push({ p0, c, p1, dx, isExit });
     }
