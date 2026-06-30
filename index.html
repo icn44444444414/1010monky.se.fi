@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>1010monky.se.fi — Binary Monkey (prototype)</title>
+    <link rel="stylesheet" href="/src/styles/stage.css" />
+  </head>
+  <body>
+    <!-- Pixi overlay: the monkey + dust live here (fixed, full-viewport, click-through) -->
+    <div id="ape-layer" aria-hidden="true"></div>
+
+    <!-- The moon: the monkey's home perch (fixed, behind content) -->
+    <div id="moonWrap" aria-hidden="true"><div id="moonStage"><div id="moon"></div></div></div>
+
+    <main id="stage">
+      <section class="panel hero">
+        <span class="eyebrow">1010monky</span>
+        <h1>The binary monkey<br />jumps the page.</h1>
+        <p class="lead">Scroll. Watch it hop section to section, made of bits.</p>
+        <span class="hint">scroll ↓</span>
+      </section>
+
+      <section class="panel left">
+        <h2>Like the moon,<br />always at your side.</h2>
+        <p>A pixel companion that leaps between every section as you read.</p>
+      </section>
+
+      <section class="panel right">
+        <h2>1010 = binary.</h2>
+        <p>The mascot is literally made of ones and zeros.</p>
+      </section>
+
+      <section class="panel left">
+        <h2>Right to left,<br />section to section.</h2>
+        <p>Every landing kicks up yellow dust and a scatter of 0s and 1s.</p>
+      </section>
+
+      <section class="panel svc" id="servizi">
+        <h2>What we do</h2>
+        <p>Placeholder services panel — a waypoint on the monkey's path.</p>
+      </section>
+
+      <section class="panel contact" id="contatti">
+        <h2>Say hi</h2>
+        <p>The last landing before the leap.</p>
+      </section>
+    </main>
+
+    <footer id="site-footer">
+      <p>At the footer, the monkey leaps off-screen and dissolves into 1010…</p>
+    </footer>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
