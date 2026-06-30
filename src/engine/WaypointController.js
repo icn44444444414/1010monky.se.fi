@@ -48,7 +48,7 @@ export class WaypointController {
       if (cx < W * 0.45) x = RX;                  // text on the left  -> sit on the right
       else if (cx > W * 0.55) x = LX;             // text on the right -> sit on the left
       else x = prevX < W * 0.5 ? RX : LX;         // centered text     -> zig-zag opposite the last
-      anchors.push({ x, y: clamp(cyMid, H * 0.36, H * 0.58) });
+      anchors.push({ x, y: clamp(cyMid + H * 0.14, H * 0.46, H * 0.68) });
       prevX = x;
     });
 
