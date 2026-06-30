@@ -116,7 +116,8 @@ export class PixiApeRenderer {
     m.y = frame.screenPos.y + bob;
 
     const dir = frame.facing === 'left' ? -1 : 1;
-    const stretch = frame.state === 'airborne' ? 0.14 * Math.min(1, Math.abs(frame.vy) * 0.02) : 0;
+    // vy is normalized [-1,1]: stretch when moving fast vertically, round at the apex.
+    const stretch = frame.state === 'airborne' ? 0.18 * Math.abs(frame.vy) : 0;
     const sx = this.scale * (1 + 0.26 * frame.squash - stretch);
     const sy = this.scale * (1 - 0.32 * frame.squash + stretch);
     m.scale.set(dir * sx, sy);

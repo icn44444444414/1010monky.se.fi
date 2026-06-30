@@ -47,12 +47,20 @@ function boot() {
     choreo.start();
 
     let lastState = 'perch';
+    let exitFrames = 0;
     function loop() {
       const frame = stateMachine.frameAt(progress);
       renderer.setFrame(frame);
-      // 1010 dust burst on each fresh landing on a section
-      if ((frame.state === 'land' || frame.state === 'exit') && lastState !== frame.state) {
+      // 1010 dust pop on each fresh landing on a section
+      if (frame.state === 'land' && lastState !== 'land') {
         dust.emitBurst(frame.screenPos.x, frame.screenPos.y);
+      }
+      // exit: stream the monkey apart into a rising column of 1010s
+      if (frame.state === 'exit') {
+        if (exitFrames % 2 === 0) dust.emitBurst(frame.screenPos.x, frame.screenPos.y, 8);
+        exitFrames++;
+      } else {
+        exitFrames = 0;
       }
       lastState = frame.state;
       requestAnimationFrame(loop);

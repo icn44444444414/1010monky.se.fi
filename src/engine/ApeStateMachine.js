@@ -6,14 +6,21 @@
 
 import { makeIdleFrame } from '../render/ApeRenderer.js';
 
-const T = { crouch: 0.12, launch: 0.22, land: 0.86 }; // thresholds within a hop
+const T = { crouch: 0.10, launch: 0.20, land: 0.82 }; // thresholds within a hop
 
 /** @param {number} t @returns {{state:import('../render/ApeRenderer.js').ApeState, squash:number}} */
 function phase(t) {
-  if (t < T.crouch) return { state: 'crouch', squash: t / T.crouch };                       // 0->1
-  if (t < T.launch) return { state: 'launch', squash: 1 - (t - T.crouch) / (T.launch - T.crouch) }; // 1->0
+  if (t < T.crouch) {                                  // anticipation: compress down
+    const tt = t / T.crouch;
+    return { state: 'crouch', squash: (1 - Math.pow(1 - tt, 3)) * 0.9 };
+  }
+  if (t < T.launch) {                                  // push-off: release the compression
+    const tt = (t - T.crouch) / (T.launch - T.crouch);
+    return { state: 'launch', squash: (1 - tt) * 0.9 };
+  }
   if (t < T.land) return { state: 'airborne', squash: 0 };
-  return { state: 'land', squash: (t - T.land) / (1 - T.land) };                              // 0->1 settle
+  const tt = (t - T.land) / (1 - T.land);              // landing pop that settles
+  return { state: 'land', squash: 0.85 * Math.pow(1 - tt, 2) };
 }
 
 export class ApeStateMachine {
@@ -40,10 +47,17 @@ export class ApeStateMachine {
     f.progress = s.t;
 
     if (s.exitT > 0) {
-      // Final segment: launch then dissolve as it clears the top of the screen.
-      f.state = s.exitT < T.launch ? 'launch' : 'exit';
-      f.squash = s.exitT < T.launch ? 1 - s.exitT / T.launch : 0;
-      f.exit = s.exitT < 0.5 ? 0 : (s.exitT - 0.5) / 0.5; // dissolve over the back half
+      // Final segment: anticipation (crouch/launch) then dissolve into 1010 off the top.
+      if (s.exitT < T.launch) {
+        const ph2 = phase(s.exitT);
+        f.state = ph2.state;
+        f.squash = ph2.squash;
+        f.exit = 0;
+      } else {
+        f.state = 'exit';
+        f.squash = 0;
+        f.exit = (s.exitT - T.launch) / (1 - T.launch); // ramp the dissolve 0->1
+      }
     } else {
       f.state = ph.state;
       f.squash = ph.squash;

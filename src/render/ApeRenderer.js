@@ -16,7 +16,7 @@
  * @property {number}   progress    // 0..1 within the current state/segment
  * @property {{x:number, y:number}} screenPos  // viewport-pixel position of the monkey's feet
  * @property {number}   squash      // 0..1 squash&stretch hint (1 = full squash on launch/land)
- * @property {number}   vy          // vertical velocity sign: <0 rising, >0 falling
+ * @property {number}   vy          // normalized vertical velocity [-1,1]: <0 rising, 0 apex, >0 falling
  * @property {number}   exit        // 0..1 progress of the off-screen dissolve (0 until 'exit')
  */
 
