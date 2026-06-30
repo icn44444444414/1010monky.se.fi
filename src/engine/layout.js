@@ -8,17 +8,17 @@
 // on the rule-of-thirds columns (3 = left third ~21%, 10 = right third ~79%), in a clean
 // left<->right zig-zag, slightly below the lifted content so it frames the text.
 
-export const GRID = { cols: 12, rows: 8 };
+export const GRID = { cols: 12, rows: 12 };
 
-// Donkey-Kong-style DESCENT: the monkey works its way DOWN the page, hopping platform to
-// platform with a couple of free-falls, then leaps away. Rows increase = lower on screen.
+// Donkey-Kong DESCENT: the monkey only ever moves DOWN (no jarring up-jumps), section by
+// section, with a free-fall near the end, then leaps away. Rows increase = lower on screen.
 export const LANDINGS = [
-  { col: 3,  row: 3 }, // 0  hero            -> upper-left, start the descent
-  { col: 10, row: 4 }, // 1  "Like the moon" -> right, a step down
-  { col: 3,  row: 6 }, // 2  "1010 = binary" -> left, DOWN 2 rows
-  { col: 10, row: 6 }, // 3  "Right to left" -> right, DOWN 2 rows
-  { col: 4,  row: 2 }, // 4  servizi         -> hop UP onto a high platform
-  { col: 9,  row: 7 }, // 5  contatti        -> FREE-FALL ~5 rows down
+  { col: 3,  row: 4 },  // 0  hero            -> upper area, start the descent
+  { col: 10, row: 5 },  // 1  "Like the moon" (left text)  -> right, a step down
+  { col: 3,  row: 6 },  // 2  "1010 = binary" (right text) -> left, down
+  { col: 10, row: 7 },  // 3  "Right to left" (left text)  -> right, down
+  { col: 3,  row: 7 },  // 4  "What we do"    (center)     -> left, beside the text (not up top)
+  { col: 10, row: 11 }, // 5  contatti        (center)     -> right, FREE-FALL down
 ];
 
 // Final leap: jump away to the top-center and dissolve into 1010.

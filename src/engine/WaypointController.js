@@ -48,7 +48,7 @@ export class WaypointController {
       const p1 = anchors[i + 1];
       const dx = p1.x - p0.x;
       const isExit = i === anchors.length - 2;
-      const arc = isExit ? H * 0.42 : clamp(28 + Math.abs(dx) * 0.10, 34, 78);
+      const arc = isExit ? H * 0.40 : clamp(20 + Math.abs(dx) * 0.07, 26, 56);
       const c = { x: (p0.x + p1.x) / 2, y: Math.min(p0.y, p1.y) - arc };
       this.segments.push({ p0, c, p1, dx, isExit });
     }
