@@ -41,6 +41,9 @@ function boot() {
 
   renderer.mount(apeLayer).then(() => {
     waypoints.measure();
+    // Dev hook: lets us 'self-play' the jump by sampling frameAt(progress) without scrolling.
+    window.__sm = stateMachine;
+    window.__wp = waypoints;
 
     // Binary dust bursts at each landing (tied to the jump, not the cursor).
     const dust = new BinaryDustField();

@@ -10,14 +10,16 @@
 
 export const GRID = { cols: 12, rows: 8 };
 
+// Donkey-Kong-style DESCENT: the monkey works its way DOWN the page, hopping platform to
+// platform with a couple of free-falls, then leaps away. Rows increase = lower on screen.
 export const LANDINGS = [
-  { col: 3,  row: 5 }, // 0  hero            (centered text) -> lower-left negative space
-  { col: 10, row: 4 }, // 1  "Like the moon" (left text)     -> right third, beside it
-  { col: 3,  row: 4 }, // 2  "1010 = binary" (right text)    -> left third, beside it
-  { col: 10, row: 4 }, // 3  left text                       -> right third, beside it
-  { col: 3,  row: 5 }, // 4  servizi         (centered)      -> lower-left
-  { col: 10, row: 5 }, // 5  contatti        (centered)      -> lower-right
+  { col: 3,  row: 3 }, // 0  hero            -> upper-left, start the descent
+  { col: 10, row: 4 }, // 1  "Like the moon" -> right, a step down
+  { col: 3,  row: 6 }, // 2  "1010 = binary" -> left, DOWN 2 rows
+  { col: 10, row: 6 }, // 3  "Right to left" -> right, DOWN 2 rows
+  { col: 4,  row: 2 }, // 4  servizi         -> hop UP onto a high platform
+  { col: 9,  row: 7 }, // 5  contatti        -> FREE-FALL ~5 rows down
 ];
 
-// Final leap: rise to the top-center and dissolve into 1010 there.
+// Final leap: jump away to the top-center and dissolve into 1010.
 export const EXIT_CELL = { col: 6, row: 1 };
