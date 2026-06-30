@@ -10,14 +10,18 @@ import { GRID, LANDINGS, EXIT_CELL } from './layout.js';
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
-const easeInCubic = (t) => t * t * t;
+const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
+const heavyFall = (t) => {
+  const tt = clamp(t, 0, 1);
+  return tt * tt * (2.7 - 1.7 * tt);
+};
 
 export class WaypointController {
   /** @param {string} panelSelector */
   constructor(panelSelector = '.panel') {
     this.panelSelector = panelSelector;
     /** @type {{x:number,y:number}[]} */ this.anchors = [];
-    /** @type {{p0:{x,y},c:{x,y},p1:{x,y},dx:number,isExit:boolean}[]} */ this.segments = [];
+    /** @type {{p0:{x,y},c:{x,y},p1:{x,y},dx:number,dy:number,arc:number,isDrop:boolean,isExit:boolean}[]} */ this.segments = [];
   }
 
   /** (Re)measure anchors + arcs from the current layout. Call on load + resize. */
@@ -47,10 +51,12 @@ export class WaypointController {
       const p0 = anchors[i];
       const p1 = anchors[i + 1];
       const dx = p1.x - p0.x;
+      const dy = p1.y - p0.y;
       const isExit = i === anchors.length - 2;
-      const arc = isExit ? H * 0.40 : clamp(20 + Math.abs(dx) * 0.07, 26, 56);
+      const isDrop = !isExit && dy > H * 0.22;
+      const arc = isExit ? H * 0.40 : isDrop ? clamp(8 + Math.abs(dx) * 0.025, 14, 28) : clamp(14 + Math.abs(dx) * 0.045, 18, 38);
       const c = { x: (p0.x + p1.x) / 2, y: Math.min(p0.y, p1.y) - arc };
-      this.segments.push({ p0, c, p1, dx, isExit });
+      this.segments.push({ p0, c, p1, dx, dy, arc, isDrop, isExit });
     }
   }
 
@@ -74,18 +80,35 @@ export class WaypointController {
 
     // Exit segment: monotonic eased rise to the top-center (visible), where it dissolves.
     if (s.isExit) {
-      const rt = Math.min(t / 0.55, 1); // the leap-away completes by exitT ~0.55, then it's gone
+      const rt = Math.min(t / 0.5, 1); // the leap-away completes by exitT ~0.5, then it's gone
       const ex = s.p0.x + (s.p1.x - s.p0.x) * easeInOutCubic(rt);
-      const ey = s.p0.y + (s.p1.y - s.p0.y) * easeOutCubic(rt); // rise FAST then settle at the top
+      const ey = s.p0.y + (s.p1.y - s.p0.y) * easeOutQuart(rt); // rise fast, then settle at the top
       return { x: ex, y: ey, t, seg, facing: s.dx >= 0 ? 'right' : 'left', vy: -1, exitT: t };
     }
 
     // Horizontal: ease-in-out so the monkey accelerates off launch and decelerates into landing.
-    const x = s.p0.x + (s.p1.x - s.p0.x) * easeInOutCubic(t);
+    const x = s.p0.x + (s.p1.x - s.p0.x) * (s.isDrop ? easeOutCubic(t) : easeInOutCubic(t));
+
+    if (s.isDrop) {
+      const ledgeT = 0.12;
+      const lipY = s.p0.y - s.arc;
+      let y, vy;
+      if (t < ledgeT) {
+        const tt = t / ledgeT;
+        y = s.p0.y + (lipY - s.p0.y) * easeOutCubic(tt);
+        vy = -0.25 * (1 - tt);
+      } else {
+        const tt = (t - ledgeT) / (1 - ledgeT);
+        y = lipY + (s.p1.y - lipY) * heavyFall(tt);
+        vy = clamp(0.18 + tt * 1.05, -1, 1);
+      }
+      const facing = s.dx === 0 ? 'right' : s.dx > 0 ? 'right' : 'left';
+      return { x, y, t, seg, facing, vy, exitT: 0 };
+    }
 
     // Vertical: asymmetric jump — floaty rise to the apex (easeOut), quicker fall (easeIn).
     // vy is normalized [-1,1]: -1 fast rising, 0 at apex, +1 fast falling.
-    const peak = 0.46;
+    const peak = 0.36;
     let y, vy;
     if (t < peak) {
       const tt = t / peak;
@@ -93,8 +116,8 @@ export class WaypointController {
       vy = -(1 - tt);
     } else {
       const tt = (t - peak) / (1 - peak);
-      y = apexY + (s.p1.y - apexY) * easeInCubic(tt);
-      vy = tt;
+      y = apexY + (s.p1.y - apexY) * heavyFall(tt);
+      vy = clamp(0.12 + tt * 0.95, -1, 1);
     }
 
     const facing = s.dx === 0 ? 'right' : s.dx > 0 ? 'right' : 'left';

@@ -111,17 +111,28 @@ export class PixiApeRenderer {
 
     const idle = frame.state === 'perch';
     const bob = idle ? Math.sin(this._t * 0.06) * this.scale * 0.6 : 0;
+    const falling = Math.max(0, frame.vy);
+    const rising = Math.max(0, -frame.vy);
+    const landingSink = frame.state === 'land' ? this.scale * 1.1 * frame.squash : 0;
 
     m.x = frame.screenPos.x;
-    m.y = frame.screenPos.y + bob;
+    m.y = frame.screenPos.y + bob + landingSink;
 
     const dir = frame.facing === 'left' ? -1 : 1;
     // vy is normalized [-1,1]: stretch when moving fast vertically, round at the apex.
-    const stretch = frame.state === 'airborne' ? 0.18 * Math.abs(frame.vy) : 0;
-    const sx = this.scale * (1 + 0.26 * frame.squash - stretch);
-    const sy = this.scale * (1 - 0.32 * frame.squash + stretch);
+    const stretch = frame.state === 'airborne' ? 0.1 * rising + 0.18 * falling : 0;
+    const sx = this.scale * (1 + 0.3 * frame.squash - stretch * 0.75);
+    const sy = this.scale * (1 - 0.34 * frame.squash + stretch);
     m.scale.set(dir * sx, sy);
-    m.rotation = frame.state === 'airborne' ? dir * 0.14 * Math.sign(frame.vy || -1) : 0;
+    if (frame.state === 'airborne') {
+      m.rotation = dir * (0.12 * falling - 0.08 * rising);
+    } else if (frame.state === 'launch') {
+      m.rotation = -dir * 0.08 * (1 - frame.squash);
+    } else if (frame.state === 'land') {
+      m.rotation = dir * 0.05 * frame.squash;
+    } else {
+      m.rotation = 0;
+    }
     m.alpha = 1 - frame.exit;
     m.visible = frame.exit < 0.999;
 
@@ -129,8 +140,9 @@ export class PixiApeRenderer {
     const sh = this.shadow;
     sh.x = frame.screenPos.x;
     sh.y = frame.screenPos.y + this.scale * 0.5;
-    sh.scale.set((this.scale / 6) * (1 + 0.5 * frame.squash), this.scale / 6);
-    sh.alpha = 0.32 * (1 - frame.exit) * (frame.state === 'airborne' ? 0.5 : 1);
+    const airShadow = frame.state === 'airborne' ? 0.34 + 0.34 * falling : 1;
+    sh.scale.set((this.scale / 6) * (1 + 0.7 * frame.squash + 0.15 * falling), this.scale / 6);
+    sh.alpha = 0.32 * (1 - frame.exit) * airShadow;
   }
 
   resize() {

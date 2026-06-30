@@ -40,15 +40,15 @@ export class BinaryDustField {
   emitBurst(x, y, n = 22) {
     for (let i = 0; i < n; i++) {
       if (this.parts.length >= MAX) this.parts.shift();
-      const bit = Math.random() < 0.55;                  // mostly binary glyphs
-      const ang = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.1; // fan upward/outward
-      const spd = 1.4 + Math.random() * 3.4;
+      const bit = Math.random() < 0.48;
+      const side = Math.random() < 0.5 ? -1 : 1;
+      const spd = 1.8 + Math.random() * 3.2;
       this.parts.push({
-        x: x + (Math.random() - 0.5) * 10,
-        y: y + (Math.random() - 0.5) * 6,
-        vx: Math.cos(ang) * spd,
-        vy: Math.sin(ang) * spd - 0.6,
-        life: 1, decay: 0.012 + Math.random() * 0.018,
+        x: x + (Math.random() - 0.5) * 16,
+        y: y + Math.random() * 5,
+        vx: side * spd * (0.65 + Math.random() * 0.55),
+        vy: -0.35 - Math.random() * 1.4,
+        life: 1, decay: 0.026 + Math.random() * 0.02,
         size: bit ? 11 + Math.random() * 4 : 2 + Math.random() * 2.5,
         bit, glyph: Math.random() < 0.5 ? '0' : '1',
       });
