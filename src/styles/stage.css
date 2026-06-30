@@ -77,6 +77,8 @@ body {
   justify-content: center;
   gap: 14px;
   padding: var(--gutter);
+  /* extra bottom padding lifts the vertically-centered content ~10vh up */
+  padding-bottom: calc(var(--gutter) + 20vh);
   max-width: 760px;
 }
 .panel.left { margin-right: auto; align-items: flex-start; text-align: left; }
