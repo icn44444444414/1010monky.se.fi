@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>1010monky studio — Binary Monkey (prototype)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <script type="module" crossorigin src="./assets/index-DIckMq4D.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-xRfOaGHj.css">
+  </head>
+  <body>
+    <!-- Pixi overlay: the monkey + dust live here (fixed, full-viewport, click-through) -->
+    <div id="ape-layer" aria-hidden="true"></div>
+
+    <!-- The moon: the monkey's home perch (fixed, behind content) -->
+    <div id="moonWrap" aria-hidden="true"><div id="moonStage"><div id="moon"></div></div></div>
+
+    <!-- Utility bar above the nav (copied from bloon.it) -->
+    <div class="topbar">
+      <div class="tb-inner">
+        <div class="tb-c">
+          <a href="mailto:hej@1010monky.se"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>hej@1010monky.se</a>
+          <span class="tb-sep">|</span>
+          <a class="tb-phone" href="tel:+46701234567"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .8-.3 1l-2.2 2.2Z"/></svg>+46 70 123 45 67</a>
+        </div>
+        <div class="tb-s">
+          <a href="#" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5H17V3.6c-.3 0-1.3-.1-2.45-.1-2.4 0-4.05 1.47-4.05 4.17V9.9H7.8V13h2.7v8h3Z"/></svg></a>
+          <a href="#" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top nav (Pixel-style pill) -->
+    <header class="nav">
+      <div class="nav-inner">
+        <a class="nav-logo" href="#top">1010monky</a>
+        <nav class="nav-links">
+          <a href="#top">Home</a>
+          <a href="#binary">Bits</a>
+          <a href="#zigzag">Work</a>
+          <a href="#servizi">Services</a>
+        </nav>
+        <div class="lang">
+          <button class="flag flag-active" data-lang="sv" title="Svenska" aria-label="Svenska">
+            <svg viewBox="0 0 16 10" aria-hidden="true"><rect width="16" height="10" fill="#006AA7"/><rect x="5" width="2" height="10" fill="#FECC00"/><rect y="4" width="16" height="2" fill="#FECC00"/></svg>
+          </button>
+          <button class="flag" data-lang="fi" title="Suomi" aria-label="Suomi">
+            <svg viewBox="0 0 18 11" aria-hidden="true"><rect width="18" height="11" fill="#fff"/><rect x="5" width="3" height="11" fill="#003580"/><rect y="4" width="18" height="3" fill="#003580"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="stage">
+      <section class="panel hero" id="top">
+        <!-- Scattered translucent square "bits" framing the hero -->
+        <div class="hero-bits" aria-hidden="true">
+          <i class="bit" style="--x:4%;--y:14%;--s:140px;--o:.12;--r:-10deg"></i>
+          <i class="bit" style="--x:14%;--y:31%;--s:72px;--o:.16;--r:6deg"></i>
+          <i class="bit" style="--x:1%;--y:48%;--s:96px;--o:.08;--r:14deg"></i>
+          <i class="bit" style="--x:84%;--y:10%;--s:124px;--o:.12;--r:8deg"></i>
+          <i class="bit" style="--x:92%;--y:27%;--s:64px;--o:.18;--r:-6deg"></i>
+          <i class="bit" style="--x:79%;--y:41%;--s:82px;--o:.07;--r:-12deg"></i>
+          <i class="bit" style="--x:7%;--y:66%;--s:66px;--o:.12;--r:10deg"></i>
+          <i class="bit" style="--x:88%;--y:62%;--s:98px;--o:.10;--r:-8deg"></i>
+          <i class="bit" style="--x:18%;--y:83%;--s:84px;--o:.10;--r:-6deg"></i>
+          <i class="bit" style="--x:73%;--y:85%;--s:70px;--o:.14;--r:8deg"></i>
+          <i class="bit dot" style="--x:24%;--y:18%;--s:10px;--o:.5"></i>
+          <i class="bit dot" style="--x:80%;--y:19%;--s:8px;--o:.5"></i>
+          <i class="bit dot" style="--x:11%;--y:55%;--s:8px;--o:.45"></i>
+          <i class="bit dot" style="--x:91%;--y:49%;--s:10px;--o:.5"></i>
+          <i class="bit dot" style="--x:31%;--y:74%;--s:8px;--o:.4"></i>
+          <i class="bit dot" style="--x:67%;--y:30%;--s:8px;--o:.45"></i>
+        </div>
+
+        <div class="hero-inner">
+          <div class="hero-top">
+            <span class="chip"><span class="spark">✦</span></span>
+            <h1><span class="px">Skräddarsydda</span><br /><b>webbsidor.</b></h1>
+            <p class="lead">Jag bygger moderna, skräddarsydda webbplatser — från grunden eller i WordPress.</p>
+          </div>
+          <div class="hero-bottom">
+            <div class="cta-row">
+              <a class="btn btn-primary" href="#contatti">Hör av dig &#8594;</a>
+              <a class="btn btn-ghost" href="#servizi">Vad jag gör</a>
+            </div>
+            <div class="stats">
+              <div class="stat"><b>50+</b><span>projekt</span></div>
+              <span class="stat-div" aria-hidden="true"></span>
+              <div class="stat"><b>100%</b><span>skräddarsytt</span></div>
+              <span class="stat-div" aria-hidden="true"></span>
+              <div class="stat"><b>5★</b><span>omdömen</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel left" id="aside"><div class="wrap"><div class="content">
+        <div class="kicker">Varför 1010monky?</div>
+        <h2>Alltid vid<br />din <b>sida.</b></h2>
+        <p>Digitala problemlösaren 1010monky är alltid vid din sida: vi lyser upp dina projekt även i de mörkaste stunderna och leder dig mot nya kreativa perspektiv.</p>
+      </div></div></section>
+
+      <section class="panel right" id="binary"><div class="wrap"><div class="content">
+        <div class="kicker">Kreativa lösningar</div>
+        <h2>Vi ger liv<br />åt dina <b>idéer.</b></h2>
+        <p>Vi är byrån som aldrig lämnar dig ensam, med förmågan att hitta innovativa och personliga lösningar. 1010monky har inspirerat visionärer, konstnärer och drömmare — på samma sätt förvandlar vi dina idéer till verklighet som gör avtryck.</p>
+        <a class="panel-btn" href="#contatti">Hör av dig &#8594;</a>
+      </div></div></section>
+
+      <section class="panel left" id="zigzag"><div class="wrap"><div class="content">
+        <div class="kicker">Bland ettor och nollor</div>
+        <h2>Idéer som känns<br />som <b>magi.</b></h2>
+        <p>I datavärlden får allt bli möjligt. När du söker en kommunikation som verkligen sticker ut finns 1010monky där, redo att följa dig vart du än vill nå.</p>
+      </div></div></section>
+
+      <section class="panel svc" id="servizi">
+        <div class="svc-inner">
+          <div class="svc-head">
+            <div class="kicker">Tjänster</div>
+            <h2>Från idé till<br /><b>färdig sajt.</b></h2>
+          </div>
+          <div class="grid">
+            <div class="card">
+              <div class="card-art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 8h18"/><path d="M9.5 12 7.5 14l2 2M14.5 12l2 2-2 2"/></svg></div>
+              <div class="body"><h3>Webbdesign &amp; utveckling</h3><p>Skräddarsydda, snabba och responsiva webbplatser byggda från grunden.</p></div>
+            </div>
+            <div class="card">
+              <div class="card-art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M6.5 8.5l2 7 2-5 2 5 2.5-7"/></svg></div>
+              <div class="body"><h3>WordPress</h3><p>Flexibla WordPress-sajter du enkelt uppdaterar själv.</p></div>
+            </div>
+            <div class="card">
+              <div class="card-art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></div>
+              <div class="body"><h3>E-handel</h3><p>Webbutiker som konverterar — smidigt från produkt till kassa.</p></div>
+            </div>
+            <div class="card">
+              <div class="card-art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6"/><path d="M20 20l-5.2-5.2"/><path d="M8 11.5v-1M10.5 11.5V9M13 11.5v-2"/></svg></div>
+              <div class="body"><h3>SEO &amp; synlighet</h3><p>Bli hittad på Google med teknisk SEO och snabb laddning.</p></div>
+            </div>
+            <div class="card">
+              <div class="card-art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="8" r="3.2"/><rect x="13" y="13" width="6.5" height="6.5" rx="1"/><path d="M8 13.5 4.8 19h6.4z"/></svg></div>
+              <div class="body"><h3>Design &amp; varumärke</h3><p>Logotyp, grafisk profil och en identitet som sticker ut.</p></div>
+            </div>
+            <div class="card">
+              <div class="card-art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6 7.7 7.7M16.3 16.3l2.1 2.1M18.4 5.6 16.3 7.7M7.7 16.3l-2.1 2.1"/></svg></div>
+              <div class="body"><h3>Underhåll &amp; support</h3><p>Löpande uppdateringar, säkerhet och support när du behöver.</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel contact" id="contatti">
+        <h2>Say hi</h2>
+        <p>The last landing before the leap.</p>
+      </section>
+    </main>
+
+    <footer id="site-footer">
+      <p>At the footer, the monkey leaps off-screen and dissolves into 1010…</p>
+    </footer>
+
+    <script>
+      // Language switcher — highlights the picked flag. (Actual SV/FI translation not wired yet.)
+      document.querySelectorAll('.lang .flag').forEach(function (f) {
+        f.addEventListener('click', function () {
+          document.querySelectorAll('.lang .flag').forEach(function (x) { x.classList.remove('flag-active'); });
+          f.classList.add('flag-active');
+        });
+      });
+    </script>
+  </body>
+</html>
